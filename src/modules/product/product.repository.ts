@@ -19,7 +19,7 @@ export const findAll = async () => {
 };
 
 export const update = async (id: string, data: Partial<ProductInput>) => {
-  return await ProductModel.findByIdAndUpdate(id, data as any, { new: true });
+  return await ProductModel.findByIdAndUpdate(id, data as any, { returnDocument: "after" });
 };
 
 

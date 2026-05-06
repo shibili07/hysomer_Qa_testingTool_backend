@@ -32,6 +32,7 @@ const InvoiceSchema = new mongoose.Schema(
     cashierName: { type: String },
     notes: { type: String },
     externalTerminalId: { type: String },
+    organizationId: { type: String },
     customer: { type: Object },
     items: [InvoiceItemSchema],
   },

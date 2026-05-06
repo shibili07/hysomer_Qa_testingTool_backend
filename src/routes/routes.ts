@@ -4,6 +4,7 @@ import productRoutes from "../modules/product/product.routes.ts";
 import supermarketRoutes from "../modules/supermarket/supermarket.routes.ts";
 import customerRoutes from "../modules/customer/customer.routes.ts";
 import invoiceRoutes from "../modules/invoice/invoice.routes.ts";
+import injectionRoutes from "../modules/injection/injection.routes.ts";
 
 
 const router=express.Router()
@@ -13,7 +14,8 @@ router.use('/api/products', productRoutes)
 router.use('/api/supermarkets', supermarketRoutes)
 router.use('/api/customers', customerRoutes)
 router.use('/api/invoices', invoiceRoutes)
+router.use('/api/running', injectionRoutes)
 
 
 export default router
-
+

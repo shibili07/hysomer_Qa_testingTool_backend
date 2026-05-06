@@ -21,7 +21,19 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
       throw new Error("JWT_SECRET is not defined");
     }
 
-    const decoded = jwt.verify(token, secret);
+    const decoded = jwt.verify(token, secret) as { id?: string; typ?: string };
+    if (decoded.typ === "refresh") {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token for this request",
+      });
+    }
+    if (!decoded.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Token is not valid",
+      });
+    }
     req.user = decoded;
     next();
   } catch (err) {

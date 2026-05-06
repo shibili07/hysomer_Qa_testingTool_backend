@@ -14,7 +14,7 @@ export const findAll = async () => {
 };
 
 export const update = async (id: string, data: Partial<SupermarketInput>) => {
-  return await SupermarketModel.findByIdAndUpdate(id, data as any, { new: true });
+  return await SupermarketModel.findByIdAndUpdate(id, data as any, { returnDocument: "after" });
 };
 
 export const remove = async (id: string) => {
