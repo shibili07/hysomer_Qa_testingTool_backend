@@ -1,7 +1,7 @@
 import type { Response } from "express";
 import { loginSchema } from "./auth.schema.ts";
 import { loginAdmin } from "./auth.service.ts";
-import type { AuthRequest } from "../../middlewares/auth.middleware.ts";
+import type { AuthRequest } from "../../shared/middleware/auth.middleware.ts";
 import { UserModel } from "./auth.model.ts";
 import { asyncHandler } from "../../shared/utils/asyncHandler.ts";
 import { AppError } from "../../shared/utils/AppError.ts";

@@ -99,17 +99,28 @@ const categories = [
   }
 ];
 
-const generateProducts = () => {
-  const products = [];
+type SeedProduct = {
+  productName: string;
+  price: number;
+  productId: string;
+  taxAmount: number;
+  discountAmount: number;
+  stock: number;
+};
+
+const generateProducts = (): SeedProduct[] => {
+  const products: SeedProduct[] = [];
   let idCounter = 1000;
 
   while (products.length < 1000) {
     const category = categories[Math.floor(Math.random() * categories.length)];
+    if (!category) continue;
     const item = category.items[Math.floor(Math.random() * category.items.length)];
+    if (!item) continue;
     const brand = brands[Math.floor(Math.random() * brands.length)];
     const weight = item.weights[Math.floor(Math.random() * item.weights.length)];
-    
-    // Calculate price based on weight
+    if (!weight) continue;
+
     let price = item.basePrice;
     if (weight.includes("kg") || weight.includes("L")) {
       const val = parseFloat(weight);
@@ -118,21 +129,19 @@ const generateProducts = () => {
       const val = parseFloat(weight);
       price = (item.basePrice / 1000) * val;
     }
-    
-    // Add some random variation to price (±5%)
+
     price = Math.round(price * (0.95 + Math.random() * 0.1));
 
     const productName = `${brand} ${item.name} (${weight})`;
-    
-    // Avoid exact duplicates
-    if (!products.find(p => p.productName === productName)) {
+
+    if (!products.find((p) => p.productName === productName)) {
       products.push({
         productName,
         price,
         productId: `PROD-${idCounter++}`,
-        taxAmount: Math.round(price * 0.12), // 12% GST average
+        taxAmount: Math.round(price * 0.12),
         discountAmount: Math.random() > 0.7 ? Math.round(price * 0.05) : 0,
-        stock: Math.floor(Math.random() * 500) + 50
+        stock: Math.floor(Math.random() * 500) + 50,
       });
     }
   }
