@@ -3,7 +3,6 @@ import logger from '../shared/utils/logger.ts'
 
 export const connectDB = async (): Promise<void> => {
     const MONGO_URI = process.env.MONGO_URI;
-    console.log(MONGO_URI);
     if (!MONGO_URI) {
         throw new Error("MONGO_URI is not defined in environment variables");
     }
