@@ -1,7 +1,14 @@
 # Render Blueprint: https://render.com/docs/blueprint-spec
 #
-# For a monorepo, point Render's Blueprint file path to this file, or set
-# rootDir on the service to this folder from a repo-root render.yaml.
+# Root Directory (Dashboard / Blueprint): must be the folder that contains
+# package.json and tsconfig.json — NOT the `src` folder. If Root Directory is
+# wrong, the start command resolves to .../src/dist/server.js and fails.
+#
+# Monorepo: set service rootDir to this backend path from the repo root, e.g.
+#   rootDir: QA_Hysomer/hysomer_Qa_testingTool_backend
+# Or set that path as "Root Directory" in the Render service settings.
+#
+# NODE_ENV=production can skip devDependencies; --include=dev keeps `tsc` available for build.
 
 services:
   - type: web
@@ -9,7 +16,7 @@ services:
     name: hysomer-qa-testing-backend
     plan: free
     region: oregon
-    buildCommand: npm install && npm run build
+    buildCommand: npm install --include=dev && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
