@@ -1,30 +1,28 @@
 import type { Response } from "express";
 import jwt from "jsonwebtoken";
 import { loginSchema } from "./auth.schema.ts";
-import { loginAdmin, issueAccessToken } from "./auth.service.ts";import type { AuthRequest } from "../../shared/middleware/auth.middleware.ts";
+import { loginAdmin, issueAccessToken } from "./auth.service.ts";
+import type { AuthRequest } from "../../shared/middleware/auth.middleware.ts";
 import { UserModel } from "./auth.model.ts";
 import { asyncHandler } from "../../shared/utils/asyncHandler.ts";
 import { AppError } from "../../shared/utils/AppError.ts";
+import { getAuthCookieOptions } from "../../shared/auth-cookies.ts";
 
-
-const cookieOpts = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax" as const,
-};
+const cookieOpts = () => getAuthCookieOptions();
 
 export const login = asyncHandler(async (req: AuthRequest, res: Response) => {
     const data = loginSchema.parse(req.body);
 
     const { accessToken, refreshToken } = await loginAdmin(data.email, data.password);
 
+    const base = cookieOpts();
     res.cookie("token", accessToken, {
-        ...cookieOpts,
-        maxAge: 15 * 60 * 1000,
+      ...base,
+      maxAge: 15 * 60 * 1000,
     });
     res.cookie("refreshToken", refreshToken, {
-        ...cookieOpts,
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+      ...base,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({ 
@@ -35,8 +33,9 @@ export const login = asyncHandler(async (req: AuthRequest, res: Response) => {
 });
 
 export const logout = asyncHandler(async (req: AuthRequest, res: Response) => {
-    res.clearCookie("token");
-    res.clearCookie("refreshToken");
+    const base = cookieOpts();
+    res.clearCookie("token", base);
+    res.clearCookie("refreshToken", base);
     res.status(200).json({
         success: true,
         message: "Logged out successfully"
@@ -57,21 +56,24 @@ export const refresh = asyncHandler(async (req: AuthRequest, res: Response) => {
     try {
         decoded = jwt.verify(refreshTokenCookie, secret) as { id?: string; typ?: string };
     } catch {
-        res.clearCookie("token");
-        res.clearCookie("refreshToken");
+        const base = cookieOpts();
+        res.clearCookie("token", base);
+        res.clearCookie("refreshToken", base);
         throw new AppError("Invalid refresh token", 401);
     }
 
     if (decoded.typ !== "refresh" || !decoded.id) {
-        res.clearCookie("token");
-        res.clearCookie("refreshToken");
+        const base = cookieOpts();
+        res.clearCookie("token", base);
+        res.clearCookie("refreshToken", base);
         throw new AppError("Invalid refresh token", 401);
     }
 
     const accessToken = issueAccessToken(decoded.id);
+    const base = cookieOpts();
     res.cookie("token", accessToken, {
-        ...cookieOpts,
-        maxAge: 15 * 60 * 1000,
+      ...base,
+      maxAge: 15 * 60 * 1000,
     });
     res.status(200).json({
         success: true,

@@ -22,6 +22,8 @@ function corsAllowedOrigins(): Set<string> {
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 const allowedOrigins = corsAllowedOrigins();
 
 app.use(

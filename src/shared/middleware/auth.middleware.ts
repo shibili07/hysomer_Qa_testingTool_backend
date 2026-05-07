@@ -1,6 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
+import { getAuthCookieOptions } from "../auth-cookies.ts";
+
 export interface AuthRequest extends Request {
   user?: any;
 }
@@ -37,7 +39,7 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
     req.user = decoded;
     next();
   } catch (err) {
-    res.clearCookie("token");
+    res.clearCookie("token", getAuthCookieOptions());
     return res.status(401).json({
       success: false,
       message: "Token is not valid"
