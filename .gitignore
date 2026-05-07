@@ -14,6 +14,7 @@ npm-debug.log*
 # build output
 dist/
 build/
+src/dist/
 
 # OS/editor
 .vscode/

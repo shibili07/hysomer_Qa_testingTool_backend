@@ -1,20 +1,36 @@
 /**
- * Render-safe entry: always runs dist/server.js next to package.json.
- * Avoids failures when the dashboard uses a wrong path like src/dist/server.js.
+ * Production entry: runs dist/server.js from package root.
+ * If the app was not built (no dist/), runs `npm run build` once.
  */
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 
 const pkgRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
-const entry = path.join(pkgRoot, "dist", "server.js");
+let entry = path.join(pkgRoot, "dist", "server.js");
 
 if (!fs.existsSync(entry)) {
-  console.error(
-    `Missing ${entry}. From the backend root, run: npm install --include=dev && npm run build`
-  );
-  process.exit(1);
+  console.error("dist/server.js missing; running npm run build …");
+  const r = spawnSync("npm", ["run", "build"], {
+    stdio: "inherit",
+    shell: true,
+    cwd: pkgRoot,
+    env: process.env,
+  });
+  if (r.status !== 0) process.exit(r.status ?? 1);
+}
+
+if (!fs.existsSync(entry)) {
+  const underSrc = path.join(pkgRoot, "src", "dist", "server.js");
+  if (fs.existsSync(underSrc)) {
+    entry = underSrc;
+  } else {
+    console.error(
+      `Missing compiled app. From the backend root run: npm install && npm run build`
+    );
+    process.exit(1);
+  }
 }
 
 const child = spawn(process.execPath, [entry], {

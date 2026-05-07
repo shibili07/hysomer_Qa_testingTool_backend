@@ -1,13 +1,16 @@
 # Render Blueprint: https://render.com/docs/blueprint-spec
 #
-# Root Directory (Dashboard / Blueprint): folder that contains package.json and tsconfig.json.
-# Start Command: `npm start` or `node ./src/render-start.mjs` — never `node src/dist/server.js`.
+# Root Directory: repo root (folder with package.json), not `src`.
+# Start Command: `npm start` (recommended) or `node dist/server.js` after install.
 #
 # Monorepo: set service rootDir to this backend path from the repo root, e.g.
 #   rootDir: QA_Hysomer/hysomer_Qa_testingTool_backend
 # Or set that path as "Root Directory" in the Render service settings.
 #
-# NODE_ENV=production can skip devDependencies; --include=dev keeps `tsc` available for build.
+# Build: `npm install` is enough — postinstall compiles TypeScript when dist/ is missing.
+# Output is mirrored to src/dist/ so `node dist/server.js` works when Root Directory is wrongly set to `src`.
+#
+# Prefer Root Directory = repo root (folder with package.json), Start = `npm start`.
 
 services:
   - type: web
@@ -15,9 +18,8 @@ services:
     name: hysomer-qa-testing-backend
     plan: free
     region: oregon
-    buildCommand: npm install --include=dev && npm run build
-    # Resolves dist/server.js from disk (never use node src/dist/server.js).
-    startCommand: node ./src/render-start.mjs
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
