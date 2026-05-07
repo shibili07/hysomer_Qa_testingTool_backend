@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "start": "node dist/server.js",
+    "start": "node ./src/render-start.mjs",
     "dev": "nodemon --exec ts-node --esm src/server.ts",
     "start:watch": "node --watch dist/server.js"
   },

@@ -1,8 +1,7 @@
 # Render Blueprint: https://render.com/docs/blueprint-spec
 #
-# Root Directory (Dashboard / Blueprint): must be the folder that contains
-# package.json and tsconfig.json — NOT the `src` folder. If Root Directory is
-# wrong, the start command resolves to .../src/dist/server.js and fails.
+# Root Directory (Dashboard / Blueprint): folder that contains package.json and tsconfig.json.
+# Start Command: `npm start` or `node ./src/render-start.mjs` — never `node src/dist/server.js`.
 #
 # Monorepo: set service rootDir to this backend path from the repo root, e.g.
 #   rootDir: QA_Hysomer/hysomer_Qa_testingTool_backend
@@ -17,7 +16,8 @@ services:
     plan: free
     region: oregon
     buildCommand: npm install --include=dev && npm run build
-    startCommand: npm start
+    # Resolves dist/server.js from disk (never use node src/dist/server.js).
+    startCommand: node ./src/render-start.mjs
     envVars:
       - key: NODE_ENV
         value: production
